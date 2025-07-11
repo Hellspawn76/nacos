@@ -31,13 +31,16 @@ import java.util.stream.Collectors;
 public abstract class AbstractMapper implements Mapper {
 
     private static final String COLUMN_SEPARATOR = "@";
+    private static final String COLUMN_NAME_PATTERN = "^[a-zA-Z0-9_]+$";
 
     @Override
     public String select(List<String> columns, List<String> where) {
         StringBuilder sql = new StringBuilder();
         String method = "SELECT ";
         sql.append(method);
-        sql.append(String.join(",", columns));
+        sql.append(columns.stream()
+            .filter(column -> column.matches(COLUMN_NAME_PATTERN))
+            .collect(Collectors.joining(",")));
         sql.append(" FROM ");
         sql.append(getTableName());
 
